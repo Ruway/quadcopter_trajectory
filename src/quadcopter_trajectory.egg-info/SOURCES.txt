@@ -1,0 +1,5 @@
+setup.py
+src/quadcopter_trajectory.egg-info/PKG-INFO
+src/quadcopter_trajectory.egg-info/SOURCES.txt
+src/quadcopter_trajectory.egg-info/dependency_links.txt
+src/quadcopter_trajectory.egg-info/top_level.txt

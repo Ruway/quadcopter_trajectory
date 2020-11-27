@@ -1,0 +1,7 @@
+<launch>
+    
+    <node name ="poly_trajectory" pkg="poly_trajectory_generation" type="poly_trajectory_node.py" output="screen">
+        <rosparam command="load" file="$(find poly_trajectory_generation)/launch/settings.yaml" param="settings"/>
+        <rosparam command="load" file="$(find poly_trajectory_generation)/launch/set_points.yaml" param="trajectory"/>
+    </node>
+</launch>

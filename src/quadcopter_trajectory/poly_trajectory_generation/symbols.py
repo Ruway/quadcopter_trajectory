@@ -1,0 +1,8 @@
+#Derivative order
+POSITION = 0 
+VELOCITY = 1 
+ACCELERATION = 2
+JERK = 3
+SNAP = 4
+
+
