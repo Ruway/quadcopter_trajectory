@@ -1,4 +1,6 @@
+README.md
 setup.py
+src/quadcopter_trajectory/__init__.py
 src/quadcopter_trajectory.egg-info/PKG-INFO
 src/quadcopter_trajectory.egg-info/SOURCES.txt
 src/quadcopter_trajectory.egg-info/dependency_links.txt

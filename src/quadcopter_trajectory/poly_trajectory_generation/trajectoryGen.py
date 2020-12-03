@@ -1,4 +1,5 @@
 from __future__ import division
+
 import glog as log
 from quadcopter_trajectory.poly_trajectory_generation import symbols
 from quadcopter_trajectory.poly_trajectory_generation.utils import euler_to_quaternion

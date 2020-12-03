@@ -1,8 +1,8 @@
 from __future__ import division
 
-from dlt_tmpc_trajectory.poly_trajectory_generation.vertex import Vertices, Vertex
-from dlt_tmpc_trajectory.poly_trajectory_generation.trajectoryGen import Trajectory
-from dlt_tmpc_trajectory.poly_trajectory_generation.symbols import *
+from quadcopter_trajectory.poly_trajectory_generation.vertex import Vertex, Vertices
+from quadcopter_trajectory.poly_trajectory_generation.trajectoryGen import Trajectory
+from quadcopter_trajectory.poly_trajectory_generation.symbols import *
 import numpy as np
 import matplotlib.pyplot as plt
 
