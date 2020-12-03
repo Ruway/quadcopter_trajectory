@@ -1,7 +1,6 @@
 <launch>
-    
-    <node name ="poly_trajectory" pkg="poly_trajectory_generation" type="poly_trajectory_node.py" output="screen">
-        <rosparam command="load" file="$(find poly_trajectory_generation)/launch/settings.yaml" param="settings"/>
-        <rosparam command="load" file="$(find poly_trajectory_generation)/launch/set_points.yaml" param="trajectory"/>
+    <node name ="poly_trajectory" pkg="quadcopter_trajectory" type="poly_trajectory.py" output="screen">
+        <rosparam command="load" file="$(find quadcopter_trajectory)/launch/settings.yaml" param="settings"/>
+        <rosparam command="load" file="$(find quadcopter_trajectory)/launch/set_points.yaml" param="trajectory"/>
     </node>
 </launch>

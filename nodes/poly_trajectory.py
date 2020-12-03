@@ -1,10 +1,11 @@
+#!/usr/bin/env python
 from __future__ import division
 import numpy as np
 import time as t
 import scipy
 import rospy
-from dlt_tmpc_trajectory.trajectoryGen import Trajectory
-from dlt_tmpc_trajectory.symbols import *
+from quadcopter_trajectory.poly_trajectory_generation.trajectoryGen import Trajectory
+from quadcopter_trajectory.poly_trajectory_generation.symbols import *
 
 from geometry_msgs.msg import Quaternion, Point, Pose, PoseStamped
 from nav_msgs.msg import Path
@@ -16,14 +17,14 @@ class Poly_trajectory(object):
 
     def __init__(self):
 
-        self._dimension = int(rospy.get_param('~/settings/dimension'))
-        self._weights = np.array(rospy.get_param('~/settings/weights')) 
-        self._polynom_degree = int(rospy.get_param('~/settings/polynom_degree'))
-        self._max_derivative_to_optimize = int(rospy.get_param('~/settings/max_derivative_to_optimize'))
+        self._dimension = int(rospy.get_param('~settings/dimension'))
+        self._weights = np.array(rospy.get_param('~settings/weights')) 
+        self._polynom_degree = int(rospy.get_param('~settings/polynom_degree'))
+        self._max_derivative_to_optimize = int(rospy.get_param('~settings/max_derivative_to_optimize'))
 
-        self._setPoints = rospy.get_param('~/trajectory/setPoints/straight_z')
-        self._eps = float(rospy.get_param('~/trajectory/eps'))
-        self._v_max = float(rospy.get_param('~/trajectory/v_max'))
+        self._setPoints = rospy.get_param('~trajectory/setPoints/straight_z')
+        self._eps = float(rospy.get_param('~trajectory/eps'))
+        self._v_max = float(rospy.get_param('~trajectory/v_max'))
         
         self.build_trajectory()
         self._trajectory.sample_trajectory(0.05)
