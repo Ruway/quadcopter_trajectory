@@ -1,9 +1,13 @@
-from setuptools import setup, find_packages
+from distutils.core import setup
+from catkin_pkg.python_setup import generate_distutils_setup
 
-setup(version='0.1.0',
-    name = 'quadcopter_trajectory',
+# Export source python files
+setup_args = generate_distutils_setup(
+    packages=['quadcopter_trajectory'],
     package_dir={'': 'src'},
-    packages=['quadcopter_trajectory'],)
+)
+
+setup(**setup_args)
 
 
 

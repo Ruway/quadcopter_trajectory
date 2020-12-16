@@ -1,10 +1,11 @@
-Metadata-Version: 1.0
+Metadata-Version: 1.2
 Name: quadcopter-trajectory
-Version: 0.1.0
-Summary: UNKNOWN
+Version: 0.0.0
+Summary: The quadcopter_trajectory package
 Home-page: UNKNOWN
-Author: UNKNOWN
-Author-email: UNKNOWN
-License: UNKNOWN
+Author: 
+Maintainer: maxbt
+Maintainer-email: maxbt@todo.todo
+License: TODO
 Description: UNKNOWN
 Platform: UNKNOWN

@@ -11,6 +11,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from quadcopter_trajectory.poly_trajectory_generation import symbols
 from quadcopter_trajectory.poly_trajectory_generation.vertex import Vertex, Vertices
 from quadcopter_trajectory.poly_trajectory_generation import utils
+# from tf.transformations import euler_from_quaternion, quaternion_from_euler, quaternion_multiply
 
 class TrajectoryTools(object):
     def __init__(self, dim_,):
@@ -42,7 +43,6 @@ class TrajectoryTools(object):
     def sample_trajectory(self, dt):
 
         self.dt = dt
-        print(self.time_segment)
         time_stamp = [sum(self.time_segment[:i]) for i in range(len(self.time_segment) + 1)]
         self.t_fine = np.array([dt * i for i in range(int(ma.ceil(time_stamp[-1]/dt)))])
 
@@ -57,12 +57,26 @@ class TrajectoryTools(object):
         for idx in range(len(self.t_fine)):
 
             z = [self.traj_fine[0][idx], self.traj_fine[1][idx], self.traj_fine[2][idx], ma.tan(self.traj_fine[3][idx]/2.0)]
+            zd = [self.vel_fine[0][idx], self.vel_fine[1][idx], self.vel_fine[2][idx], self.vel_fine[3][idx]]
             zdd = [self.acc_fine[0][idx], self.acc_fine[1][idx], self.acc_fine[2][idx], self.acc_fine[3][idx]]
 
             r, p, y = self.flat_representation(z, zdd)
-            qx, qy, qz, qw = utils.euler_to_quaternion(r, p, y)
 
-            quad_trajectory.append([self.traj_fine[0][idx], self.traj_fine[1][idx], self.traj_fine[2][idx], qx, qy, qz, qw])
+            qx, qy, qz, qw = utils.euler_to_quaternion(r, p, y)
+            # qx2, qy2, qz2, qw2 = quaternion_from_euler(r, p, y)
+            # r2,p2,y2 = euler_from_quaternion([qx2, qy2, qz2, qw2])
+            # r3,p3,y3 = utils.quaternion_to_euler([qx2, qy2, qz2, qw2])
+
+            # print(r,p,y)
+            # print(r2,p2,y2)
+            # print(r3,p3,y3)
+            # print(qx,qy,qz,qw)
+            # print(qx2,qy2,qz2,qw2)
+
+            quad_trajectory.append([self.traj_fine[0][idx], self.traj_fine[1][idx], self.traj_fine[2][idx], \
+                                    self.vel_fine[0][idx], self.vel_fine[1][idx], self.vel_fine[2][idx], \
+                                    0, 0, self.vel_fine[3][idx], \
+                                     qx, qy, qz, qw])
         
         return quad_trajectory
 
