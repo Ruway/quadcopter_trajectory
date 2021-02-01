@@ -7,10 +7,10 @@ import numpy as np
 import casadi as ca
 from quadcopter_trajectory.poly_trajectory_generation.trajectoryTools import TrajectoryTools
 
-class Trajectory(TrajectoryTools):
+class Polytrajectory(object):
     def __init__(self, N, dim):
         log.check_eq(N % 2, 0)
-        super(TrajectoryTools, self).__init__()
+        # super(TrajectoryTools, self).__init__()
         self.N = N 
         self.dim = dim
         self.max_derivative_to_optimize = N / 2.0 -1
@@ -47,7 +47,7 @@ class Trajectory(TrajectoryTools):
         self.set_weight_mask(weights)
         self.Q = self._setup_cost_matrix(derivative_to_optimise)
         self.A, self.b = self._setup_constraints_matrix(max_continuity)
-
+        
         self.opts_settings = {'ipopt.max_iter' : 100,
                          'ipopt.print_level':0, 
                          'print_time':0, 

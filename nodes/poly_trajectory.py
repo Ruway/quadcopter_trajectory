@@ -18,17 +18,18 @@ from quadcopter_trajectory_msg.msg import QuadcopterTrajectory, QuadcopterState
 class Poly_trajectory(object):
 
     def __init__(self):
+        target = rospy.get_param('~target_path')
+        dt = rospy.get_param('~time_step')
 
         self._dimension = int(rospy.get_param('~settings/dimension'))
         self._weights = np.array(rospy.get_param('~settings/weights')) 
         self._polynom_degree = int(rospy.get_param('~settings/polynom_degree'))
         self._max_derivative_to_optimize = int(rospy.get_param('~settings/max_derivative_to_optimize'))
 
-        self._setPoints = rospy.get_param('~trajectory/setPoints/first')
+        self._setPoints = rospy.get_param('~trajectory/setPoints/'+target)
         self._eps = float(rospy.get_param('~trajectory/eps'))
         self._v_max = float(rospy.get_param('~trajectory/v_max'))
-        dt = rospy.get_param('~time_step')
-        
+       
         self.build_trajectory()
         self._trajectory.sample_trajectory(dt)
 

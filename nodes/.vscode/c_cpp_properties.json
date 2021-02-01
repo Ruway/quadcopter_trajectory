@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/maxbt/catkin_ws/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/maxbt/catkin_ws/src/mavros/libmavconn/include/**",
+        "/home/maxbt/catkin_ws/src/sitl_gazebo/include/**",
+        "/home/maxbt/catkin_ws/src/mavros/mavros/include/**",
+        "/home/maxbt/catkin_ws/src/mavros/mavros_msgs/include/**",
+        "/home/maxbt/catkin_ws/src/motion_capture_system/mocap_base/include/**",
+        "/home/maxbt/catkin_ws/src/motion_capture_system/mocap_qualisys/include/**",
+        "/home/maxbt/catkin_ws/src/motion_capture_system/mocap_vicon/include/**",
+        "/home/maxbt/catkin_ws/src/PlotJuggler/include/**",
+        "/home/maxbt/catkin_ws/src/mavros/test_mavros/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ]
+}

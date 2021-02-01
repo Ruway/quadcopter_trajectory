@@ -10,7 +10,7 @@ import matplotlib.patches as patches
 from mpl_toolkits.mplot3d import Axes3D
 from quadcopter_trajectory.poly_trajectory_generation import symbols
 from quadcopter_trajectory.poly_trajectory_generation.vertex import Vertex, Vertices
-from quadcopter_trajectory.poly_trajectory_generation import utils
+from quadcopter_trajectory import utils
 # from tf.transformations import euler_from_quaternion, quaternion_from_euler, quaternion_multiply
 
 class TrajectoryTools(object):
@@ -49,6 +49,7 @@ class TrajectoryTools(object):
         self.traj_fine = self.eval(self.t_fine, symbols.POSITION)
         self.vel_fine = self.eval(self.t_fine, symbols.VELOCITY)
         self.acc_fine = self.eval(self.t_fine, symbols.ACCELERATION)
+        return self.traj_fine, self.vel_fine
        
     def generate_quad_trajectory(self):
 
@@ -83,7 +84,7 @@ class TrajectoryTools(object):
     def get_time_stamp(self):
         return self.t_fine
 
-    def showPath(self, fig_title):
+    def showPath(self, fig_title="Path"):
 
         rc('text', usetex=True)
         fig = plt.figure()
@@ -132,7 +133,7 @@ class TrajectoryTools(object):
         ax.set_ylabel(r'$y$')
         ax.set_zlabel(r'$z$')
         ax.set_title(fig_title)
-        # plt.show()
+        plt.show()
 
     def showAttitude(self, model):
 
@@ -198,7 +199,7 @@ class TrajectoryTools(object):
                     axs[dd, d].set_xlabel('t')
         # plt.show()
 
-    def get_MPC_traj(self, x, t0, dt, horizon, model):
+    def get_MPC_traj(self, t0, dt, horizon):
 
         x_ref = []
         xd_ref = []
@@ -292,8 +293,8 @@ class TrajectoryTools(object):
 
         vertices.set_yaw_constraints()
 
-        # for v in vertices: 
-        #     print(v)
+        for v in vertices: 
+            print(v)
 
         return vertices
 

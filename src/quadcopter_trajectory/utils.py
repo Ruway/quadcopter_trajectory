@@ -3,6 +3,8 @@ import math
 import numpy as np
 from numpy import linalg as LA
 import casadi as ca
+import os
+import yaml
 
 X = 0
 Y = 1
@@ -25,21 +27,25 @@ Roll = 9
 Pitch = 10
 Yaw = 11
 
+DLT_TMPC_PATH = os.path.dirname(os.path.abspath(__file__))
+CONTROLLERS_PATH = DLT_TMPC_PATH + '/controllers/'
+MODELS_PATH = DLT_TMPC_PATH + '/models/'
+
 def euler_to_quaternion(roll, pitch, yaw):
-    """
-    Perform a conversion from euler angle to quaternion
+    # """
+    # Perform a conversion from euler angle to quaternion
 
-    :param roll: roll angle
-    :type roll: float
-    :param pitch: pitch angle
-    :type pitch: float
-    :param yaw: yaw angle 
-    :type yaw: float
+    # :param roll: roll angle
+    # :type roll: float
+    # :param pitch: pitch angle
+    # :type pitch: float
+    # :param yaw: yaw angle 
+    # :type yaw: float
 
-    :return: Quaternion
-    :rtype: list
+    # :return: Quaternion
+    # :rtype: list
 
-    """
+    # """
     cy = np.cos(yaw * 0.5)
     sy = np.sin(yaw * 0.5)
     cp = np.cos(pitch * 0.5)
@@ -60,15 +66,15 @@ def euler_to_quaternion(roll, pitch, yaw):
     return [qx, qy, qz, qw]
 
 def quaternion_to_euler(quaternion):
-    """
-    Perform a conversion from quaternion to euler angle 
+    # """
+    # Perform a conversion from quaternion to euler angle 
 
-    :param quaternion: quaternion
-    :type quaternion: ca.DM, list, np.array
-    :return: Euler angles [roll, pitch, yaw]
-    :rtype: list of float
+    # :param quaternion: quaternion
+    # :type quaternion: ca.DM, list, np.array
+    # :return: Euler angles [roll, pitch, yaw]
+    # :rtype: list of float
 
-    """
+    # """
     [x, y, z, w] = quaternion
     
     t0 = +2.0 * (w * x + y * z)
@@ -85,17 +91,17 @@ def quaternion_to_euler(quaternion):
     return [roll, pitch, yaw]
 
 def q_err(q_t, q_r):
-    """
-    Compute angular error between two unit quaternions.
+    # """
+    # Compute angular error between two unit quaternions.
 
-    :param q_t: New quaternion
-    :type q_t: ca.DM, list, np.array
-    :param q_r: Reference quaternion
-    :type q_r: ca.DM, list, np.array
-    :return: vector corresponding to SK matrix
-    :rtype: ca.DM
+    # :param q_t: New quaternion
+    # :type q_t: ca.DM, list, np.array
+    # :param q_r: Reference quaternion
+    # :type q_r: ca.DM, list, np.array
+    # :return: vector corresponding to SK matrix
+    # :rtype: ca.DM
 
-    """
+    # """
     q_upper_t = [q_r[3],-q_r[0],-q_r[1],-q_r[2]]
     q_lower_t = [q_t[3],q_t[0],q_t[1],q_t[2]]
 
@@ -110,3 +116,39 @@ def q_err(q_t, q_r):
 
     return ca.vertcat(phi_t,theta_t,psi_t)
 
+
+def read_default_params_mpc(path):
+    data = {}
+    params = {}
+
+    for i in MPC_PARAMS :
+        params[i] = None
+
+    with open(path) as file_d:
+        data = yaml.load(file_d, Loader=yaml.FullLoader)
+    file_d.close()
+
+    for i in MPC_PARAMS:
+        if i in data.keys():
+            params[i] = np.array(data[i])
+
+    return params
+
+def read_default_params_quad(path):
+    data = {}
+
+    with open(path) as file_d:
+        data = yaml.load(file_d, Loader=yaml.FullLoader)
+    file_d.close()
+
+    g = data['g']
+    m = data['mass']
+    Ixx = data['inertia']['xx']
+    Iyy = data['inertia']['yy']
+    Izz = data['inertia']['zz']
+    dynamics = data['dynamic']
+
+    return g, m, Ixx, Iyy, Izz, dynamics
+
+
+ 
