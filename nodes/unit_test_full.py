@@ -1,5 +1,4 @@
 from quadcopter_trajectory.mpc_trajectory_generation.trajectory_generation import Trajectory_generation
-
 import numpy as np
 
 # setPoints = [[0, 0, 0], [2.0, -1.0, 2.0], [5.0, 3.0, 4.0], [6.0, 5.0, 5.5], [7.0, -5, 5]]
@@ -22,4 +21,4 @@ ref_trajectory.build_polytrajectory_solver()
 ref_trajectory.generate_polytrajectory(display = True)
 ref_trajectory.build_mpc_solver()
 
-ref_trajectory.generate_mpc_trajectory()
+ref_trajectory.generate_mpc_trajectory(display = True)

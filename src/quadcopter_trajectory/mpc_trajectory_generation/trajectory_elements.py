@@ -141,7 +141,7 @@ class Obstacle(object):
         self.radius = r
         self.height = h
 
-    def show(self, ax):
+    def show_3d(self, ax):
         height = np.linspace(0, self.height, 100)
         theta = np.linspace(0, 2*3.1459, 100)
         x_fine = []
@@ -158,7 +158,7 @@ class Obstacle(object):
 
         return ax
 
-
+    
 
 
 
