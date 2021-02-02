@@ -106,8 +106,6 @@ class Vertices():
             start = self._data[i].get_constraint(symbols.POSITION)[:]
             stop = self._data[i+1].get_constraint(symbols.POSITION)[:]
             dist = LA.norm(stop -start)
-            print(stop, start)
-            print(dist)
             estimate_time.append(dist / (eps * v_max))
 
         return np.array(estimate_time)
@@ -158,7 +156,7 @@ class Obstacle(object):
 
         return ax
 
-    
+
 
 
 

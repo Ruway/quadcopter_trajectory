@@ -296,6 +296,7 @@ class MPCTrajectory(object):
     def mpc_controller(self, x0, x_ref, u0=None):
         
         x_pred, u_pred, t_solve = self.solve_mpc(x0, x_ref)
+        
         return x_pred, u_pred, t_solve
 
 

@@ -1,4 +1,0 @@
-dimension : 4
-weights : [1,1,1]
-polynom_degree : 10
-max_derivative_to_optimize : 3

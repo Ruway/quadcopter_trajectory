@@ -7,6 +7,13 @@ from quadcopter_trajectory.mpc_trajectory_generation.mpc_solver import MPCTrajec
 from quadcopter_trajectory.mpc_trajectory_generation.trajectory_elements import *
 from quadcopter_trajectory.mpc_trajectory_generation.utils import *
 
+from geometry_msgs.msg import Quaternion, Point, Pose, PoseStamped
+from nav_msgs.msg import Path
+from std_msgs.msg import Header
+from visualization_msgs.msg import MarkerArray, Marker
+import std_srvs.srv
+from quadcopter_trajectory_msg.msg import QuadcopterTrajectory, QuadcopterState
+
 POSITION = 0 
 VELOCITY = 1 
 ACCELERATION = 2
@@ -24,13 +31,18 @@ state_label = ['x [m]','y [m]','z [m]','vx [m.s-1]','vy [m.s-1]','vz [m.s-1]','w
 class Trajectory_generation(object):
     def __init__(self, setpoint, dt, obstacles = [], arena_lb = [-2, -2, 0.0], arena_ub = [2, 2, 2]):
 
-        self._setpoint = setpoint
         self._dt = dt
-        self.waypoints = []
-        self.obstacles = []
         self.arena_ub = arena_ub
         self.arena_lb = arena_lb
-        
+
+        self.setpoint = setpoint
+        self.waypoints = []
+        self.obstacles = []
+        self.trajectory = []
+
+        self.t_fine = []
+        self.t_total = 0.0
+
         self.ax_states = None
         self.ax_3d = None
 
@@ -50,6 +62,7 @@ class Trajectory_generation(object):
         self.vertices = self._build_vertices()
 
         self.time_vect = self.vertices.estimate_segment_time(self._v_max, self._eps)
+        self.t_total = sum(self.time_vect)
 
         self._poly_trajectory.setup_from_vertice(self.vertices, self.time_vect, ACCELERATION, self._max_derivative_to_optimize, self._weights)
 
@@ -90,6 +103,9 @@ class Trajectory_generation(object):
         x0, reference = self._build_reference()
         
         x_solve, u, t_solve = self._mpc_trajectory.mpc_controller(x0, reference)
+        for x in x_solve : 
+            state = np.array([x_i[0] for x_i in np.array(x)])
+            self.trajectory.append(state)
 
         if display == True:
             self.ax_3d = self._build_mpctrejectory_3DAxes(x_solve, self.ax_3d)
@@ -98,6 +114,85 @@ class Trajectory_generation(object):
             self.ax_states = self._build_mpctrejectory_state_axes(x_solve, self.ax_states)
             plt.draw()
             plt.show()
+
+    def get_reference_mpc(self, id_0, horizon, states = 'Full'):
+        output_reference = np.array([])
+        for idx in range(id_0, id_0 + horizon +1):
+            if idx < len(self.trajectory):
+                output_reference = np.concatenate((output_reference, np.array(self.trajectory[idx])))
+            else : 
+                output_reference = np.concatenate((output_reference, np.array(self.trajectory[-1])))
+
+        return output_reference
+
+    def build_ros_message(self):
+
+        trajectory = QuadcopterTrajectory()
+    
+        trajectory.size = len(self.trajectory)
+        pathHead = Header()
+        trajectory.header = pathHead
+
+        for idx, pt in enumerate(self.trajectory):
+            position = Point()
+            position.x, position.y, position.z = pt[:3]
+
+            velocity = Point()
+            velocity.x, velocity.y, velocity.z = pt[3:6]
+
+            rate = Point()
+            rate.x, rate.y, rate.z = pt[6:9]
+
+            quaternion = Quaternion()
+            quaternion.x, quaternion.y, quaternion.z, quaternion.w = euler_to_quaternion(pt[9], pt[10], pt[11])
+
+            state = QuadcopterState()
+            state.position = position
+            state.attitude = quaternion
+            state.velocity = velocity
+            state.rates = rate
+            
+            trajectory.states.append(state)
+        
+        return trajectory
+    
+    def build_viz_message(self):
+        trajectory_viz = MarkerArray()
+
+        for idx, pt in enumerate(self.trajectory):
+            pts_marker = Marker()
+
+            pathHead = Header()
+            pathHead.frame_id = 'map'
+            pts_marker.header = pathHead
+
+            pts_marker.type = 2
+            pts_marker.action = 0
+            pts_marker.id = idx
+
+            pt_viz = Pose()
+            
+            position = Point()
+            position.x, position.y, position.z = pt[:3]
+
+            quaternion = Quaternion()
+            quaternion.x, quaternion.y, quaternion.z, quaternion.w = euler_to_quaternion(pt[9], pt[10], pt[11])
+
+            pt_viz.orientation = quaternion
+            pt_viz.position = position
+            pts_marker.pose = pt_viz
+
+            pts_marker.scale.x = 0.05
+            pts_marker.scale.y = 0.05
+            pts_marker.scale.z = 0.05
+            pts_marker.color.a = 1.0
+            pts_marker.color.r = 0.0
+            pts_marker.color.g = 1.0
+            pts_marker.color.b = 0.0
+
+            trajectory_viz.markers.append(pts_marker)
+
+        return trajectory_viz
 
     def _build_reference(self):
         mpc_ref = np.array([])
@@ -115,15 +210,15 @@ class Trajectory_generation(object):
         vertices = Vertices()
 
         v = Vertex(self._poly_dimensions)
-        v.start(self._setpoint[0], self._max_derivative_to_optimize)
+        v.start(self.setpoint[0], self._max_derivative_to_optimize)
         vertices.add_start(v)
         v = Vertex(self._poly_dimensions)
-        v.end(self._setpoint[len(self._setpoint)-1], self._max_derivative_to_optimize)
+        v.end(self.setpoint[len(self.setpoint)-1], self._max_derivative_to_optimize)
         vertices.add_end(v)
 
-        for pts in range(1, len(self._setpoint)-1):
+        for pts in range(1, len(self.setpoint)-1):
             v = Vertex(self._poly_dimensions)
-            v.add_constrain(POSITION, self._setpoint[pts])
+            v.add_constrain(POSITION, self.setpoint[pts])
             vertices.append(v)
 
         return vertices
@@ -211,7 +306,7 @@ class Trajectory_generation(object):
 
             for vertex in self.vertices:
                 pt = vertex.get_constraint(symbols.POSITION)
-                ax.scatter(pt[0], pt[1], pt[2], color='r', marker='o', label='Setpoint')  
+                ax.scatter(pt[0], pt[1], pt[2], color='r', marker='o', label='Setpoint' if vertex.id == 0 else '')  
 
             ax.set_xlabel(r'$x$')
             ax.set_ylabel(r'$y$')

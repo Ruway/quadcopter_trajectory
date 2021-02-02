@@ -3,7 +3,7 @@ import math
 import os
 import yaml
 import numpy as np
-from quadcopter_trajectory.models.quadcopter_CA import Quadcopter
+from quadcopter_trajectory.mpc_trajectory_generation.quadcopter_CA import Quadcopter
 
 X = 0
 Y = 1
@@ -59,4 +59,39 @@ def q2w(wp_prev, wp, wp_next, ub, lb):
     dlb[1] = y + np.cos(psi) * lb if y + np.cos(psi) * lb < wp_prev.pos[1] else wp_prev.pos[1]
 
     return dub, dlb
+
+def euler_to_quaternion(roll, pitch, yaw):
+    # """
+    # Perform a conversion from euler angle to quaternion
+
+    # :param roll: roll angle
+    # :type roll: float
+    # :param pitch: pitch angle
+    # :type pitch: float
+    # :param yaw: yaw angle 
+    # :type yaw: float
+
+    # :return: Quaternion
+    # :rtype: list
+
+    # """
+    cy = np.cos(yaw * 0.5)
+    sy = np.sin(yaw * 0.5)
+    cp = np.cos(pitch * 0.5)
+    sp = np.sin(pitch * 0.5)
+    cr = np.cos(roll * 0.5)
+    sr = np.sin(roll * 0.5)
+
+    qw = cr * cp * cy + sr * sp * sy
+    qx = sr * cp * cy - cr * sp * sy
+    qy = cr * sp * cy + sr * cp * sy
+    qz = cr * cp * sy - sr * sp * cy
+
+    # qx = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+    # qy = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.cos(pitch/2) * np.sin(yaw/2)
+    # qz = np.cos(roll/2) * np.cos(pitch/2) * np.sin(yaw/2) - np.sin(roll/2) * np.sin(pitch/2) * np.cos(yaw/2)
+    # qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+
+    return [qx, qy, qz, qw]
+
 

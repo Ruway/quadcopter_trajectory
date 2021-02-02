@@ -18,7 +18,7 @@ obs = [[0.0, -0.1, 0.2], [1.0, 0.1, 0.2]]
 
 ref_trajectory = Trajectory_generation(setPoints, 0.02, obstacles=obs)
 ref_trajectory.build_polytrajectory_solver()
-ref_trajectory.generate_polytrajectory(display = True)
+ref_trajectory.generate_polytrajectory(display = False)
 ref_trajectory.build_mpc_solver()
 
 ref_trajectory.generate_mpc_trajectory(display = True)
